@@ -95,6 +95,7 @@ type FNameEntrySerialized struct {
 	CasePreservingHash    uint16 `json:"case_preserving_hash"`
 }
 
+// https://github.com/SatisfactoryModdingUE/UnrealEngine/blob/4.22-CSS/Engine/Source/Runtime/CoreUObject/Private/UObject/ObjectResource.cpp#L218
 type FObjectImport struct {
 	ClassPackage string         `json:"class_package"`
 	ClassName    string         `json:"class_name"`
@@ -108,6 +109,7 @@ type FPackageIndex struct {
 	Reference interface{} `json:"reference"`
 }
 
+// https://github.com/SatisfactoryModdingUE/UnrealEngine/blob/4.22-CSS/Engine/Source/Runtime/CoreUObject/Private/UObject/ObjectResource.cpp#L107
 type FObjectExport struct {
 	ClassIndex                                   *FPackageIndex `json:"class_index"`
 	SuperIndex                                   *FPackageIndex `json:"super_index"`
