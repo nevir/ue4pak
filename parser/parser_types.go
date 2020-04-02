@@ -278,7 +278,13 @@ func (parser *PakParser) ReadString() string {
 		return utils.DecodeUtf16(parser.Read(stringLength))
 	}
 
-	return string(parser.Read(stringLength))
+	result := string(parser.Read(stringLength))
+	// Handle null-terminated strings.
+	if result[len(result)-1] == 0 {
+		result = result[:len(result)-1]
+	}
+
+	return result
 }
 
 func (parser *PakParser) ReadFloat32() float32 {
