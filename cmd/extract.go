@@ -22,6 +22,7 @@ func init() {
 	format = extractCmd.Flags().StringP("format", "f", "json", "Output format type")
 	output = extractCmd.Flags().StringP("output", "o", "extracted.json", "Output file (or directory if --split)")
 	split = extractCmd.Flags().Bool("split", false, "Whether output should be split into a file per asset")
+	compact = extractCmd.Flags().Bool("compact", false, "Whether output should omit verbose metadata and statistics")
 	pretty = extractCmd.Flags().Bool("pretty", false, "Whether to output in a pretty format")
 
 	extractCmd.MarkFlagRequired("assets")
@@ -77,7 +78,7 @@ var extractCmd = &cobra.Command{
 					}
 
 					log.Infof("Writing Result: %s\n", destination)
-					resultBytes := formatResults(entry)
+					resultBytes := formatEntry(entry)
 					err = ioutil.WriteFile(destination, resultBytes, 0644)
 					if err != nil {
 						panic(err)
@@ -89,7 +90,7 @@ var extractCmd = &cobra.Command{
 		}
 
 		if !*split {
-			resultBytes := formatResults(results)
+			resultBytes := formatEntries(results)
 			err = ioutil.WriteFile(*output, resultBytes, 0644)
 		}
 
@@ -99,7 +100,27 @@ var extractCmd = &cobra.Command{
 	},
 }
 
-func formatResults(result interface{}) []byte {
+func formatEntry(entry *parser.PakEntrySet) []byte {
+	if *compact {
+		return marshalResults(parser.MakeCompactEntry(entry))
+	} else {
+		return marshalResults(entry)
+	}
+}
+
+func formatEntries(entries []*parser.PakEntrySet) []byte {
+	if *compact {
+		compactEntries := make([]*parser.CompactEntry, len(entries))
+		for i, entry := range entries {
+			compactEntries[i] = parser.MakeCompactEntry(entry)
+		}
+		return marshalResults(compactEntries)
+	} else {
+		return marshalResults(entries)
+	}
+}
+
+func marshalResults(result interface{}) []byte {
 	var resultBytes []byte
 	var err error
 
