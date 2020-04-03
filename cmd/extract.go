@@ -71,7 +71,7 @@ var extractCmd = &cobra.Command{
 			p := parser.NewParser(file)
 			p.ProcessPak(shouldProcess, func(name string, entry *parser.PakEntrySet, _ *parser.PakFile) {
 				if *split {
-					destination := filepath.Join(*output, name+"."+*format)
+					destination := filepath.Join(*output, entry.ExportRecord.FileName+"."+*format)
 					err := os.MkdirAll(filepath.Dir(destination), 0755)
 					if err != nil {
 						panic(err)
